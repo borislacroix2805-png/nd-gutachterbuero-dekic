@@ -84,7 +84,8 @@ for (const [vpName, vp] of Object.entries(viewports)) {
           const t0 = performance.now()
           const tick = () => {
             s.focus ||= op('.vf__focus') > 0.9
-            s.flash ||= op('.vf__flash') > 0.3
+            // Blitz ist sehr kurz – bei langsamen Frames reicht jede sichtbare Aufhellung
+            s.flash ||= op('.vf__flash') > 0.05
             s.shot ||= op('.vf__shot') > 0.9
             s.thumb ||= op('.phone__thumb') > 0.9
             if ((s.focus && s.flash && s.shot && s.thumb) || performance.now() - t0 > 9500) resolve(s)
@@ -93,7 +94,7 @@ for (const [vpName, vp] of Object.entries(viewports)) {
           tick()
         }),
     )
-    assert.deepEqual(seen, { focus: true, flash: true, shot: true, thumb: true })
+    assert.deepEqual(seen, { focus: true, flash: true, shot: true, thumb: true }, `erfasst: ${JSON.stringify(seen)}`)
   })
 
   if (vpName !== 'desktop') {
