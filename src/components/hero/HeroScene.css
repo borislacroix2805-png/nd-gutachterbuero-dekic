@@ -1,7 +1,8 @@
 /*
  * Alle Positionen in % der Szene (Bildmaße 647 × 483 px, Ausschnitt der Vorlage).
- * Die Displayfläche des Smartphones ist ein Parallelogramm:
+ * Bedienelemente (.phone) folgen dem Smartphone-Körper als Parallelogramm:
  * Ursprung (166.25 | 100.5), x-Achse (152 | 20), y-Achse (-47.1 | 300) in Bildpixeln.
+ * Das Kamerabild (.vf) ist perspektivisch exakt auf die Display-Innenecken abgebildet (siehe dort).
  */
 .hero-scene {
   position: relative;
@@ -13,8 +14,6 @@
   position: absolute;
   inset: 0;
   container-type: inline-size;
-  transform-origin: 60% 55%;
-  will-change: transform;
 }
 
 .hero-scene__img,
@@ -26,13 +25,37 @@
   object-fit: cover;
 }
 
-/* Blitzlicht: dieselbe Fotografie, am Schaden stark aufgehellt und weich maskiert */
+/*
+ * Blitzlicht: dieselbe Fotografie, aufgehellt und auf Scheinwerfer (oben) und beschädigten
+ * Kotflügel (unten) maskiert. Hand und Smartphone bleiben unbeleuchtet, das Bild bewegt sich nie.
+ */
 .hero-scene__carlight {
   opacity: 0;
-  filter: brightness(2.1) contrast(1.06) saturate(0.85);
-  -webkit-mask-image: radial-gradient(ellipse 26% 34% at 78% 74%, #000 0%, rgb(0 0 0 / 0.55) 42%, transparent 100%);
-  mask-image: radial-gradient(ellipse 26% 34% at 78% 74%, #000 0%, rgb(0 0 0 / 0.55) 42%, transparent 100%);
+  /* LED-Blitz: kaltweißes Licht, deutlich heller, Farbsättigung leicht reduziert */
+  filter: brightness(2.5) contrast(1.08) saturate(0.72) hue-rotate(-8deg);
+  --headlight: radial-gradient(ellipse 23% 18% at 74% 45%, #000 0%, rgb(0 0 0 / 0.55) 45%, transparent 100%);
+  --fender: radial-gradient(ellipse 22% 26% at 81% 76%, #000 0%, rgb(0 0 0 / 0.6) 45%, transparent 100%);
+  /* breiter, schwächerer Anteil: Lackfläche von Kotflügel und Motorhaube */
+  --paint: radial-gradient(ellipse 30% 42% at 82% 58%, rgb(0 0 0 / 0.45) 0%, transparent 100%);
+  -webkit-mask-image: var(--headlight), var(--fender), var(--paint);
+  mask-image: var(--headlight), var(--fender), var(--paint);
   pointer-events: none;
+}
+
+/* Glanzlichter des Blitzes auf Scheinwerferglas, Chromleiste und Kotflügelkante (additiv, kein Lichtkegel) */
+.hero-scene__reflex {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 5% 4% at 64% 51%, rgb(240 248 255 / 1), transparent 100%),
+    radial-gradient(ellipse 10% 2.4% at 79% 41%, rgb(240 248 255 / 0.9), transparent 100%),
+    radial-gradient(ellipse 14% 3.8% at 71% 65%, rgb(230 242 255 / 0.65), transparent 100%),
+    /* Glanzpunkt im Zentrum des Rissbilds (Bildpunkt 528 | 370) */
+    radial-gradient(ellipse 4% 3.2% at 81.6% 76.6%, rgb(245 250 255 / 0.75), transparent 100%),
+    radial-gradient(ellipse 11% 8% at 81% 77%, rgb(230 242 255 / 0.4), transparent 100%);
 }
 
 /* ── Smartphone-Display ─────────────────────────────────────────────────── */
@@ -46,9 +69,21 @@
   transform-origin: 0 0;
 }
 
+/*
+ * Kamerabild: Rechteck 152 × 210 Bildpixel, per Homographie exakt auf die vier gemessenen Innenecken des
+ * Kamerabereichs im Foto abgebildet (Bildpixel, je ~0,8 px nach außen für saubere Kanten):
+ * oben links 168.8 | 99.6, oben rechts 318.9 | 122.1, unten rechts 285.4 | 336.3, unten links 126.4 | 311.1.
+ * Die Zerlegung in translate/matrix/perspective/rotate nutzt nur cqw-Längen und skaliert daher mit der Szene.
+ */
 .vf {
   position: absolute;
-  inset: 0 0 30%;
+  left: 0;
+  top: 0;
+  width: 23.493cqw;
+  height: 32.4575cqw;
+  transform-origin: 0 0;
+  transform: translate(26.0952cqw, 15.3997cqw) matrix(0.98202, 0.147, -0.18779, 0.98155, 0, 0)
+    perspective(141.228cqw) rotateY(-2.0309deg) rotateX(14.4868deg);
   overflow: hidden;
   background: #07090a;
   border-radius: 1.5%;
@@ -61,44 +96,34 @@
   overflow: hidden;
 }
 
-.vf__live {
-  filter: blur(7px) brightness(1.08);
-  animation: handheld 3.4s ease-in-out infinite alternate;
-}
-
-/* Leichtes Freihand-Wackeln – reine Transform-Animation, läuft auf dem Compositor */
-@keyframes handheld {
-  0% {
-    transform: translate(0, 0);
-  }
-  50% {
-    transform: translate(0.8%, -0.4%);
-  }
-  100% {
-    transform: translate(0.2%, -0.8%);
-  }
+/* Startzustand: Livebild minimal unscharf. Der Filter sitzt auf dem (größeren) Bild, nicht auf dem
+   beschnittenen Container – so entstehen an den Displaykanten keine dunklen Ränder. */
+.vf__live .vf__img {
+  filter: blur(2.5px);
 }
 
 .vf__img {
   position: absolute;
   max-width: none;
-  /* Ausschnitt x 400–647, y 142–483 der Szene → Schaden an der Fahrzeugfront */
-  width: 261.94%;
-  left: -161.94%;
-  top: -41.6%;
-  transform-origin: 80.9% 64.7%;
-  will-change: transform;
+  /*
+   * Ausschnitt x 451.3–604.7, y 264–476 der Szene (Seitenverhältnis des Displays 152 : 210):
+   * Zentrum des Rissbilds am Kotflügel (528 | 370) liegt exakt in der Displaymitte; unten bleiben
+   * 7 px Bildreserve für die Unschärfe, daher keine schwarzen Ränder.
+   */
+  width: 421.77%;
+  left: -294.2%;
+  top: -124.53%;
 }
 
 .vf__shot {
   opacity: 0;
   visibility: hidden;
-  box-shadow: 0 0 0 0.25cqw rgb(255 255 255 / 0.9);
 }
 
 .vf__focus {
   position: absolute;
-  inset: 30% 12% 9%;
+  /* zentriert über dem Rissbild (= Displaymitte) */
+  inset: 31% 20%;
   opacity: 0;
   visibility: hidden;
 }
@@ -135,39 +160,13 @@
   border-width: 0 0.42cqw 0.42cqw 0;
 }
 
+/* Auslöse-Feedback des Displays: kurzes Abdunkeln wie bei echten Kamera-Apps */
 .vf__flash {
   position: absolute;
   inset: 0;
-  background: #fff;
+  background: #000;
   opacity: 0;
   pointer-events: none;
-}
-
-.vf__badge {
-  position: absolute;
-  left: 50%;
-  top: 6%;
-  display: flex;
-  align-items: center;
-  gap: 0.6cqw;
-  padding: 0.7cqw 1.5cqw 0.7cqw 1.1cqw;
-  border-radius: 99px;
-  background: rgb(0 26 33 / 0.82);
-  border: 0.15cqw solid rgb(139 244 247 / 0.6);
-  color: #fff;
-  font-size: 1.35cqw;
-  font-weight: 650;
-  white-space: nowrap;
-  translate: -50% 0;
-  opacity: 0;
-  visibility: hidden;
-}
-
-.vf__badge svg {
-  width: 1.7cqw;
-  height: 1.7cqw;
-  color: var(--turq-300);
-  stroke-width: 3;
 }
 
 /* Auslöser (deckt den Auslöser im Foto exakt ab) */
@@ -219,14 +218,8 @@
   }
 
   .vf__shot,
-  .vf__badge,
   .phone__thumb {
     opacity: 1;
     visibility: visible;
-  }
-
-  .vf__shot {
-    transform: scale(0.9);
-    border-radius: 6%;
   }
 }

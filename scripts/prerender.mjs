@@ -7,6 +7,8 @@ const root = fileURLToPath(new URL('..', import.meta.url))
 const dist = `${root}dist`
 const ssrEntry = `${root}dist-ssr/entry-server.js`
 const siteUrl = (process.env.SITE_URL ?? '').replace(/\/+$/, '')
+// Vorschau/Demo (VITE_PREVIEW=true): nie indexieren – Meta-Tag auf jeder Seite plus X-Robots-Tag-Header
+const preview = process.env.VITE_PREVIEW === 'true'
 
 // Produktions-Build auf Cloudflare (Branch main) ohne Domain würde canonical und Sitemap verlieren → abbrechen.
 if (!siteUrl && process.env.CF_PAGES_BRANCH === 'main') {
@@ -19,10 +21,10 @@ const template = await readFile(`${dist}/index.html`, 'utf8')
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
 
-function page(meta, html, { noindex = false } = {}) {
+function page(meta, html, { noindex = preview } = {}) {
   const url = siteUrl ? `${siteUrl}${meta.path === '/' ? '/' : meta.path}` : ''
   const head = [
-    noindex ? '<meta name="robots" content="noindex" />' : '',
+    noindex ? `<meta name="robots" content="${preview ? 'noindex, nofollow' : 'noindex'}" />` : '',
     url && !noindex ? `<link rel="canonical" href="${url}" />` : '',
     '<meta property="og:type" content="website" />',
     '<meta property="og:locale" content="de_DE" />',
@@ -62,5 +64,10 @@ if (siteUrl) {
   console.warn('SITE_URL nicht gesetzt: canonical, og:url und sitemap.xml werden ausgelassen.')
 }
 await writeFile(`${dist}/robots.txt`, robots.join('\n') + '\n')
+if (preview) {
+  const headers = await readFile(`${dist}/_headers`, 'utf8')
+  await writeFile(`${dist}/_headers`, headers.replace('/*\n', '/*\n  X-Robots-Tag: noindex, nofollow\n'))
+  console.log('Vorschau-Build: noindex, nofollow aktiv')
+}
 await rm(`${root}dist-ssr`, { recursive: true, force: true })
 console.log(`Prerender: ${routes.length} Seiten + 404.html`)

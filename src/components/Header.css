@@ -185,6 +185,7 @@
   }
 }
 
+/* Desktop: vollständige Navigation statt Menü-Button */
 @media (min-width: 1100px) {
   .site-nav {
     display: flex;
@@ -194,6 +195,12 @@
     margin-left: clamp(8px, 1.6vw, 24px);
   }
 
+  .site-header__actions .site-header__burger {
+    display: none;
+  }
+}
+
+@media (min-width: 1400px) {
   .site-header__phone {
     display: inline-flex;
   }

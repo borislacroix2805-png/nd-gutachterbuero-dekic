@@ -14,15 +14,10 @@ const mainLinks = [
   { to: '/ablauf', label: 'Ablauf' },
   { to: '/wissen', label: 'Wissen' },
   { to: '/ueber-uns', label: 'Über uns' },
+  { to: '/kontakt', label: 'Kontakt' },
 ]
 
-const menuLinks = [
-  { to: '/', label: 'Startseite' },
-  ...services,
-  ...mainLinks,
-  { to: '/kontakt', label: 'Kontakt' },
-  { to: '/schaden-melden', label: 'Schaden melden' },
-]
+const menuLinks = [{ to: '/', label: 'Startseite' }, ...services, ...mainLinks, { to: '/schaden-melden', label: 'Schaden melden' }]
 
 export function Header() {
   const { pathname } = useLocation()

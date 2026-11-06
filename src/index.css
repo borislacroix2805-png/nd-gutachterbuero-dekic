@@ -362,3 +362,51 @@ textarea {
     animation-duration: 0.01ms !important;
   }
 }
+
+/* Große Bildschirme (Full-HD und breiter): Inhaltsbereich nutzt mehr Breite */
+@media (min-width: 1600px) {
+  :root {
+    --container: min(84vw, 1600px);
+  }
+}
+
+/*
+ * WQHD und 4K: gesamte Seite proportional vergrößern – das Layout entspricht dann einem großzügigen
+ * Full-HD-Layout, Schrift und Vektorgrafik bleiben scharf. Media Queries beziehen sich weiter auf die
+ * echte Fensterbreite.
+ */
+@media (min-width: 2400px) {
+  html {
+    zoom: 1.3333;
+  }
+}
+
+@media (min-width: 3200px) {
+  html {
+    zoom: 1.6667;
+  }
+}
+
+@media (min-width: 3800px) {
+  html {
+    zoom: 2;
+  }
+}
+
+/* Kennzeichnung der Vorschau (nur im Build mit VITE_PREVIEW=true) */
+.demo-banner {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 1000;
+  margin: 0;
+  padding: 8px var(--gutter);
+  background: #ffd23f;
+  color: #1a1a1a;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+body:has(.demo-banner) {
+  padding-bottom: 40px;
+}

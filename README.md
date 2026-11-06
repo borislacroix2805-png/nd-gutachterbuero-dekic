@@ -114,7 +114,7 @@ HSTS, `X-Frame-Options: DENY`, `nosniff`, Referrer-Policy, Permissions-Policy, C
 
 ## Offene Punkte vor der Veröffentlichung
 
-- **Unternehmensangaben bestätigen:** Telefonnummer (aus der Vorlage), Anschrift, E-Mail, Rechtsform,
+- **Unternehmensangaben bestätigen:** Telefonnummer 0157 5362 8154 (vom Auftraggeber genannt), Anschrift, E-Mail, Rechtsform,
   Inhaber, ggf. USt-IdNr. und berufsrechtliche Angaben → `src/content/site.ts`, dann `verified: true`.
 - **Impressum und Datenschutzerklärung** vervollständigen und rechtlich prüfen lassen.
 - **Aussagen verifizieren:** „Zertifizierte Kfz-Sachverständige“ und „Anerkannt bei Versicherungen“

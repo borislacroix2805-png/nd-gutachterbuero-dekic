@@ -35,6 +35,12 @@ export default function App() {
         Zum Inhalt springen
       </a>
       <RouteEffects />
+      {/* Vorschau-Build (VITE_PREVIEW=true): deutlich als Demo gekennzeichnet */}
+      {import.meta.env.VITE_PREVIEW === 'true' && (
+        <p className="demo-banner" role="note">
+          Demoversion – Website in Entwicklung
+        </p>
+      )}
       <Header />
       <main id="main" tabIndex={-1}>
         <Routes>
