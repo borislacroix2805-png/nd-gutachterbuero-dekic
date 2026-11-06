@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Unit-Tests
+        run: npm test
+      - name: Build (Typecheck, Client, Prerender)
+        run: npm run build
+      - name: Cloudflare Pages Functions kompilieren
+        run: npx wrangler pages functions build --outdir /tmp/cf-functions
+      - name: Browser installieren
+        run: npx playwright-core install --with-deps chromium webkit
+      - name: End-to-End-Tests (Chromium + WebKit)
+        run: |
+          node tests/e2e/serve.mjs &
+          npx --yes wait-on@8 http://localhost:8788
+          BROWSER=chromium BASE_URL=http://localhost:8788 npm run e2e
+          BROWSER=webkit BASE_URL=http://localhost:8788 npm run e2e
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots
+          path: test-results/
+          retention-days: 7

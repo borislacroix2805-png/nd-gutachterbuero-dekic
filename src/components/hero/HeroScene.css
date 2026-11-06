@@ -1,0 +1,232 @@
+/*
+ * Alle Positionen in % der Szene (Bildmaße 647 × 483 px, Ausschnitt der Vorlage).
+ * Die Displayfläche des Smartphones ist ein Parallelogramm:
+ * Ursprung (166.25 | 100.5), x-Achse (152 | 20), y-Achse (-47.1 | 300) in Bildpixeln.
+ */
+.hero-scene {
+  position: relative;
+  aspect-ratio: 647 / 483;
+  overflow: hidden;
+}
+
+.hero-scene__plate {
+  position: absolute;
+  inset: 0;
+  container-type: inline-size;
+  transform-origin: 60% 55%;
+  will-change: transform;
+}
+
+.hero-scene__img,
+.hero-scene__carlight {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Blitzlicht: dieselbe Fotografie, am Schaden stark aufgehellt und weich maskiert */
+.hero-scene__carlight {
+  opacity: 0;
+  filter: brightness(2.1) contrast(1.06) saturate(0.85);
+  -webkit-mask-image: radial-gradient(ellipse 26% 34% at 78% 74%, #000 0%, rgb(0 0 0 / 0.55) 42%, transparent 100%);
+  mask-image: radial-gradient(ellipse 26% 34% at 78% 74%, #000 0%, rgb(0 0 0 / 0.55) 42%, transparent 100%);
+  pointer-events: none;
+}
+
+/* ── Smartphone-Display ─────────────────────────────────────────────────── */
+.phone {
+  position: absolute;
+  left: 25.7%;
+  top: 20.81%;
+  width: 23.49%;
+  height: 62.11%;
+  transform: matrix(1, 0.1316, -0.1571, 1, 0, 0);
+  transform-origin: 0 0;
+}
+
+.vf {
+  position: absolute;
+  inset: 0 0 30%;
+  overflow: hidden;
+  background: #07090a;
+  border-radius: 1.5%;
+}
+
+.vf__live,
+.vf__shot {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.vf__live {
+  filter: blur(7px) brightness(1.08);
+  animation: handheld 3.4s ease-in-out infinite alternate;
+}
+
+/* Leichtes Freihand-Wackeln – reine Transform-Animation, läuft auf dem Compositor */
+@keyframes handheld {
+  0% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(0.8%, -0.4%);
+  }
+  100% {
+    transform: translate(0.2%, -0.8%);
+  }
+}
+
+.vf__img {
+  position: absolute;
+  max-width: none;
+  /* Ausschnitt x 400–647, y 142–483 der Szene → Schaden an der Fahrzeugfront */
+  width: 261.94%;
+  left: -161.94%;
+  top: -41.6%;
+  transform-origin: 80.9% 64.7%;
+  will-change: transform;
+}
+
+.vf__shot {
+  opacity: 0;
+  visibility: hidden;
+  box-shadow: 0 0 0 0.25cqw rgb(255 255 255 / 0.9);
+}
+
+.vf__focus {
+  position: absolute;
+  inset: 30% 12% 9%;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.vf__focus i {
+  position: absolute;
+  width: 20%;
+  height: 16%;
+  border: 0 solid rgb(255 255 255 / 0.95);
+  filter: drop-shadow(0 0 0.3cqw rgb(0 0 0 / 0.5));
+}
+
+.vf__focus i:nth-child(1) {
+  left: 0;
+  top: 0;
+  border-width: 0.42cqw 0 0 0.42cqw;
+}
+
+.vf__focus i:nth-child(2) {
+  right: 0;
+  top: 0;
+  border-width: 0.42cqw 0.42cqw 0 0;
+}
+
+.vf__focus i:nth-child(3) {
+  left: 0;
+  bottom: 0;
+  border-width: 0 0 0.42cqw 0.42cqw;
+}
+
+.vf__focus i:nth-child(4) {
+  right: 0;
+  bottom: 0;
+  border-width: 0 0.42cqw 0.42cqw 0;
+}
+
+.vf__flash {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.vf__badge {
+  position: absolute;
+  left: 50%;
+  top: 6%;
+  display: flex;
+  align-items: center;
+  gap: 0.6cqw;
+  padding: 0.7cqw 1.5cqw 0.7cqw 1.1cqw;
+  border-radius: 99px;
+  background: rgb(0 26 33 / 0.82);
+  border: 0.15cqw solid rgb(139 244 247 / 0.6);
+  color: #fff;
+  font-size: 1.35cqw;
+  font-weight: 650;
+  white-space: nowrap;
+  translate: -50% 0;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.vf__badge svg {
+  width: 1.7cqw;
+  height: 1.7cqw;
+  color: var(--turq-300);
+  stroke-width: 3;
+}
+
+/* Auslöser (deckt den Auslöser im Foto exakt ab) */
+.phone__shutter {
+  position: absolute;
+  left: 36.22%;
+  top: 85.08%;
+  width: 24.67%;
+  height: 12.5%;
+  border-radius: 50%;
+  background: #0a0c0d;
+  box-shadow: inset 0 0 0 0.5cqw #f4f6f6;
+}
+
+.phone__shutter-disc {
+  position: absolute;
+  inset: 15%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #fff, #e9eded 70%, #d5dbdc);
+}
+
+/* Galerie-Vorschau links vom Auslöser */
+.phone__thumb {
+  position: absolute;
+  left: 9.2%;
+  top: 90.8%;
+  width: 11.84%;
+  height: 6%;
+  overflow: hidden;
+  border-radius: 0.5cqw;
+  box-shadow: 0 0 0 0.18cqw rgb(255 255 255 / 0.85);
+  opacity: 0;
+  visibility: hidden;
+}
+
+.phone__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 80% 76%;
+  transform: scale(2.6);
+  transform-origin: 80% 76%;
+}
+
+/* Reduzierte Bewegung: aufgenommenes Foto statisch auf dem Display */
+@media (prefers-reduced-motion: reduce) {
+  .vf__live {
+    visibility: hidden;
+  }
+
+  .vf__shot,
+  .vf__badge,
+  .phone__thumb {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .vf__shot {
+    transform: scale(0.9);
+    border-radius: 6%;
+  }
+}

@@ -1,0 +1,45 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(12px, 1.4vw, 20px);
+  color: var(--text-on-dark);
+}
+
+.logo__mark {
+  width: clamp(84px, 9vw, 118px);
+  height: auto;
+}
+
+.logo__divider {
+  width: 1.5px;
+  height: clamp(30px, 3.4vw, 42px);
+  background: rgb(242 246 247 / 0.8);
+}
+
+.logo__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.logo__small {
+  font-size: clamp(0.75rem, 1.15vw, 1.0625rem);
+  font-weight: 450;
+  letter-spacing: 0.04em;
+}
+
+.logo__big {
+  margin-top: 4px;
+  font-size: clamp(1.375rem, 2.3vw, 1.9375rem);
+  font-weight: 750;
+  letter-spacing: 0.02em;
+}
+
+.logo--light {
+  color: var(--ink-900);
+}
+
+.logo--light .logo__divider {
+  background: var(--ink-800);
+}

@@ -1,0 +1,14 @@
+# Cloudflare Pages – Projektkonfiguration (kein Deploy ohne Freigabe, siehe README)
+name = "nd-gutachterbuero-dekic"
+pages_build_output_dir = "./dist"
+compatibility_date = "2026-10-01"
+
+# Spätere Schadenmeldung – erst nach Freigabe anlegen und einkommentieren:
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "nd-dekic-schadenmeldungen"
+# database_id = "<wird von `wrangler d1 create` ausgegeben>"
+#
+# [[r2_buckets]]
+# binding = "PHOTOS"
+# bucket_name = "nd-dekic-schadenfotos"
